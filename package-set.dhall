@@ -36,9 +36,9 @@ let
     , version = "master"
     , dependencies = ["base"] : List Text
     },
-    { name = "modclub"
+    { name = "modsdk"
     , repo = "https://github.com/modclub-app/sdk"
-    , version = "master"
+    , version = "0.1.1"
     , dependencies = ["base"] : List Text
     },
     { name = "canistergeek"

@@ -1,7 +1,5 @@
 export const idlFactory = ({ IDL }) => {
-  return IDL.Service({
-    'getValue' : IDL.Func([], [IDL.Nat], ['query']),
-    'increment' : IDL.Func([], [], []),
-  });
+  const Whitelist = IDL.Service({ 'setup' : IDL.Func([], [IDL.Text], []) });
+  return Whitelist;
 };
 export const init = ({ IDL }) => { return []; };
