@@ -1,11 +1,11 @@
 {
   "canisters": {
-    "counter": {
+    "whitelist": {
       "main": "src/backend/main.mo",
       "type": "motoko"
     },
     "assets": {
-      "dependencies": ["counter"],
+      "dependencies": ["whitelist"],
       "frontend": {
         "entrypoint": "dist/index.html"
       },
