@@ -22,9 +22,10 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
   stable var whitelist : TrieSet.Set<Principal> = TrieSet.empty();
   // principals in whitelist queue haven't provided POH on modclubs end yet, they will be redirected to modclubs site until
   // we receive the callback moving their principal to `whitelist`
-  stable var whitelistQueue : Trie.Trie<Principal, Text> = Trie.empty();
-  // principals in notFirstAssociation have been associated with 
-  stable var notFirstAssociation: TrieSet.Set<Principal> = TrieSet.empty();
+  stable var queue: Trie.Trie<Principal, Text> = Trie.empty();
+  // principals in blacklist can't complete POH and thus shouldnt trigger subsequent calls to 
+  // `verifyHumanity`
+  stable var blacklist: TrieSet.Set<Principal> = TrieSet.empty();
 
   /******************
   * PUBLIC METHODS *
@@ -35,11 +36,11 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
     if (principalIsWhitelisted(msg.caller)) {
       return #err(#alreadyWhitelisted)
     // this principal already has a token and has to complete POH
-    } else if (getWhitelistQueue(msg.caller) != null) {
+    } else if (getPrincipalFromQueue(msg.caller) != null) {
       return #err(#pohAlreadyInitiated)
     // this principal tried to link with a modclub account that already linked another principal
-    } else if (principalIsNotFirstAssociation(msg.caller)) {
-      return #err(#pohAlreadyUsedForDifferentPrincipal)
+    } else if (principalIsBlacklisted(msg.caller)) {
+      return #err(#principalBlacklisted)
     }
     else {
       // because the whitelist is a set we don't have to worry about atomicity in this case
@@ -50,33 +51,95 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
           whitelistPrincipal(msg.caller);
           return #ok()
         };
-        case (false, #verified) {
-          notFirstAssociationPrincipal(msg.caller);
+        // this isn't the first association with the modclub account for this challenge
+        case (false, _) {
+          blacklistPrinicpal(msg.caller);
           return #err(#notFirstAssociation)
         };
-        case (_, #startPoh) {
-
+        // poh was rejected
+        case (_, #rejected) {
+          blacklistPrinicpal(msg.caller);
+          return #err(#pohRejected)
         };
-        case (_, #notSubmitted) {
-
-        };
-        case (_, #expired) {
-
-        };
+        // poh hasn't been completed yet
         case (_, _) {
-
-        }
+          switch (response.token) {
+            case (?token) {
+              queuePrincipal(msg.caller, token);
+              #err(#pohNotCompleted)
+            };
+            // if we can't find a token we blacklist the caller as a safeguard
+            // because the token should always be present
+            case (_) {
+              blacklistPrinicpal(msg.caller);
+              return #err(#noTokenFound)
+            }
+          }
+        };
       };
-      return #ok
     }
   };
 
   public shared(msg) func getWhitelist(): async [Principal] {
     TrieSet.toArray(whitelist)
   };
+  
+  public shared query (msg) func getWhitelistQuery(): async [Principal] {
+    TrieSet.toArray(whitelist)
+  };
 
   public shared(msg) func isWhitelisted(principal: Principal) : async Bool {
     principalIsWhitelisted(principal)
+  };
+
+  public shared query (msg) func isWhitelistedQuery(principal: Principal) : async Bool {
+    principalIsWhitelisted(principal)
+  };
+  
+  public shared(msg) func getBlacklist(): async [Principal] {
+    TrieSet.toArray(blacklist)
+  };
+  
+  public shared query (msg) func getBlacklistQuery(): async [Principal] {
+    TrieSet.toArray(blacklist)
+  };
+
+  public shared(msg) func isBlacklisted(principal: Principal) : async Bool {
+    principalIsBlacklisted(principal)
+  };
+
+  public shared query (msg) func isBlacklistedQuery(principal: Principal) : async Bool {
+    principalIsBlacklisted(principal)
+  };
+
+  public shared(msg) func getQueue(): async [(Principal,Text)] {
+    Trie.toArray<Principal, Text, (Principal,Text)>(queue, func (principal: Principal, token: Text) {return (principal,token)})
+  };
+
+  public shared query (msg) func getQueueQuery(): async [(Principal,Text)] {
+    Trie.toArray<Principal, Text, (Principal,Text)>(queue, func (principal: Principal, token: Text) {return (principal,token)})
+  };
+
+  public shared(msg) func isQueued(principal: Principal) : async Bool {
+    switch (getPrincipalFromQueue(principal)) {
+      case (?token) {
+        return true
+      };
+      case (_) {
+        return false
+      }
+    }
+  };
+
+  public shared query (msg) func isQueuedQuery(principal: Principal) : async Bool {
+    switch (getPrincipalFromQueue(principal)) {
+      case (?token) {
+        return true
+      };
+      case (_) {
+        return false
+      }
+    }
   };
   
   public shared (msg) func registerCallback() {
@@ -95,19 +158,19 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
     whitelist := TrieSet.put<Principal.Principal>(whitelist, principal, Principal.hash(principal), Principal.equal);
   };
 
-  func principalIsNotFirstAssociation(principal: Principal) : Bool {
-    TrieSet.mem<Principal.Principal>(notFirstAssociation, principal, Principal.hash(principal), Principal.equal);
+  func principalIsBlacklisted(principal: Principal) : Bool {
+    TrieSet.mem<Principal.Principal>(blacklist, principal, Principal.hash(principal), Principal.equal);
   };
 
-  func notFirstAssociationPrincipal(principal : Principal) {
-    whitelist := TrieSet.put<Principal.Principal>(whitelist, principal, Principal.hash(principal), Principal.equal);
+  func blacklistPrinicpal(principal : Principal) {
+    blacklist := TrieSet.put<Principal.Principal>(blacklist, principal, Principal.hash(principal), Principal.equal);
   };
 
-  func getWhitelistQueue(principal : Principal) : ?Text {
-    Trie.get(whitelistQueue, Types.accountKey(principal), Principal.equal)
+  func getPrincipalFromQueue(principal : Principal) : ?Text {
+    Trie.get(queue, Types.accountKey(principal), Principal.equal)
   };
 
-  func putWhitelistQueue(principal : Principal, token: Text) {
-    whitelistQueue := Trie.put(whitelistQueue, Types.accountKey(principal), Principal.equal, token).0;
+  func queuePrincipal(principal : Principal, token: Text) {
+    queue := Trie.put(queue , Types.accountKey(principal), Principal.equal, token).0;
   };
 };
