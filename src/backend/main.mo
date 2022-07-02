@@ -9,15 +9,15 @@ import Modclub "mo:modsdk/modclub";
 import Types "types";
 
 shared ({ caller = init_minter}) actor class Whitelist() = this {
-  /*************
-  * CONSTANTS *
-  *************/
+/*************
+* CONSTANTS *
+*************/
 
   let ENV = "staging";
 
-  /****************
-  * STABLE STATE *
-  ****************/
+/****************
+* STABLE STATE *
+****************/
 
   stable var whitelist : TrieSet.Set<Principal> = TrieSet.empty();
   // principals in whitelist queue haven't provided POH on modclubs end yet, they will be redirected to modclubs site until
@@ -27,9 +27,9 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
   // `verifyHumanity`
   stable var blacklist: TrieSet.Set<Principal> = TrieSet.empty();
 
-  /******************
-  * PUBLIC METHODS *
-  ******************/
+/******************
+* PUBLIC METHODS *
+******************/
 
   public shared(msg) func checkStatus() : async Result.Result<(), Types.CheckStatusError> {
     // this principal is already whitelisted
@@ -45,41 +45,23 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
     else {
       // because the whitelist is a set we don't have to worry about atomicity in this case
       let response = await Modclub.getModclubActor(ENV).verifyHumanity(Principal.toText(msg.caller));
-      switch (response.isFirstAssociation, response.status) {
-        // user has successfully verified his first principal
-        case (true, #verified) {
-          whitelistPrincipal(msg.caller);
-          return #ok()
-        };
-        // this isn't the first association with the modclub account for this challenge
-        case (false, _) {
-          blacklistPrinicpal(msg.caller);
-          return #err(#notFirstAssociation)
-        };
-        // poh was rejected
-        case (_, #rejected) {
-          blacklistPrinicpal(msg.caller);
-          return #err(#pohRejected)
-        };
-        // poh hasn't been completed yet
-        case (_, _) {
-          switch (response.token) {
-            case (?token) {
-              queuePrincipal(msg.caller, token);
-              #err(#pohNotCompleted)
-            };
-            // if we can't find a token we blacklist the caller as a safeguard
-            // because the token should always be present
-            case (_) {
-              blacklistPrinicpal(msg.caller);
-              return #err(#noTokenFound)
-            }
-          }
-        };
-      };
+      handlePohResponse(response, ?msg.caller)
     }
   };
 
+  
+  public shared (msg) func registerCallback() {
+    assert(msg.caller == init_minter);
+    await Modclub.getModclubActor(ENV).subscribePohCallback({callback});
+  };
+
+  public shared (msg) func callback(response: Modclub.PohVerificationResponsePlus) {
+    ignore handlePohResponse(response, null);
+  };
+
+
+
+// getters
   public shared(msg) func getWhitelist(): async [Principal] {
     TrieSet.toArray(whitelist)
   };
@@ -141,14 +123,11 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
       }
     }
   };
-  
-  public shared (msg) func registerCallback() {
 
-  };
   
-  /*******************
-  * PRIVATE METHODS *
-  *******************/
+/*******************
+* PRIVATE METHODS *
+*******************/
 
   func principalIsWhitelisted(principal : Principal) : Bool {
     TrieSet.mem<Principal.Principal>(whitelist, principal, Principal.hash(principal), Principal.equal);
@@ -173,4 +152,51 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
   func queuePrincipal(principal : Principal, token: Text) {
     queue := Trie.put(queue , Types.accountKey(principal), Principal.equal, token).0;
   };
+
+  func handlePohResponse(response: Modclub.PohVerificationResponsePlus, principal: ?Principal) : Result.Result<(), Types.CheckStatusError> {
+    var caller : Principal = Principal.fromText("2vxsx-fae");
+    switch (principal) {
+      // if the method is called from within this canister, a caller principal is provided
+      case (?principal) {
+        caller := principal;
+      };
+      // if the method is called from the callback, no caller is provided
+      case (_) {
+        caller := Principal.fromText(response.providerUserId);
+      }
+    };
+
+    switch (response.isFirstAssociation, response.status) {
+      // user has successfully verified his first principal
+      case (true, #verified) {
+        whitelistPrincipal(caller);
+        return #ok()
+      };
+      // this isn't the first association with the modclub account for this challenge
+      case (false, _) {
+        blacklistPrinicpal(caller);
+        return #err(#notFirstAssociation)
+      };
+      // poh was rejected
+      case (_, #rejected) {
+        blacklistPrinicpal(caller);
+        return #err(#pohRejected)
+      };
+      // poh hasn't been completed yet
+      case (_, _) {
+        switch (response.token) {
+          case (?token) {
+            queuePrincipal(caller, token);
+            #err(#pohNotCompleted)
+          };
+          // if we can't find a token we blacklist the caller as a safeguard
+          // because the token should always be present
+          case (_) {
+            blacklistPrinicpal(caller);
+            return #err(#noTokenFound)
+          }
+        }
+      };
+    };
+  }
 };
