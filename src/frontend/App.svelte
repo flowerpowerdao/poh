@@ -1,7 +1,7 @@
 <script lang="ts">
-  import Intro from "./pages/Intro.svelte";
+  import CheckPOH from "./pages/CheckPOH.svelte";
 </script>
 
 <div class="App">
-  <Intro />
+  <CheckPOH />
 </div>

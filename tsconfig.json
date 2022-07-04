@@ -9,18 +9,19 @@
      * `import type` instead of `import` for Types.
      */
     "importsNotUsedAsValues": "error",
+    "isolatedModules": true,
     /**
      * To have warnings / errors of the Svelte compiler at the
      * correct position, enable source maps by default.
      */
     "sourceMap": true,
-    // "skipLibCheck": true,
     "esModuleInterop": true,
+    "skipLibCheck": true,
     "noEmit": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "allowJs": true,
-    "checkJs": true,
+    // "checkJs": true,
     "types": ["vite/client", "svelte", "node"],
     "baseUrl": ".",
     "paths": { "canisters/*": [".dfx/local/canisters/*"] }
