@@ -157,6 +157,10 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
     queue := Trie.put(queue , Types.accountKey(principal), Principal.equal, token).0;
   };
 
+  func unqueuePrincipal(principal : Principal) {
+    queue := Trie.remove<Principal, Text>(queue, Types.accountKey(principal), Principal.equal).0;
+  };
+
   func handlePohResponse(response: Modclub.PohVerificationResponsePlus, principal: ?Principal) : Result.Result<(), Types.CheckStatusError> {
     var caller : Principal = Principal.fromText("2vxsx-fae");
     switch (principal) {
@@ -174,6 +178,8 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
       // user has successfully verified his first principal
       case (true, #verified) {
         whitelistPrincipal(caller);
+        // make sure we remove the principal from the queue
+        unqueuePrincipal(caller);
         return #ok()
       };
       // this isn't the first association with the modclub account for this challenge
