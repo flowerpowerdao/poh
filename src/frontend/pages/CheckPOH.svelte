@@ -7,7 +7,7 @@
   import Card from "../components/Card.svelte";
   import { REDIRECT_URL } from "../constants";
 
-  let state: string = "pohAlreadyInitiated";
+  let state: string;
   let token: string;
 
   async function checkStatus() {
@@ -22,7 +22,7 @@
     }
   }
 
-  // onMount(checkStatus);
+  onMount(checkStatus);
 </script>
 
 {#if state === "ok"}
