@@ -56,6 +56,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(IDL.Tuple(IDL.Principal, IDL.Text))],
         ['query'],
       ),
+    'getToken' : IDL.Func([], [IDL.Opt(IDL.Text)], []),
     'getWhitelist' : IDL.Func([], [IDL.Vec(IDL.Principal)], []),
     'getWhitelistQuery' : IDL.Func([], [IDL.Vec(IDL.Principal)], ['query']),
     'isBlacklisted' : IDL.Func([IDL.Principal], [IDL.Bool], []),

@@ -36,7 +36,7 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
     if (principalIsWhitelisted(msg.caller)) {
       return #err(#alreadyWhitelisted)
     // this principal already has a token and has to complete POH
-    } else if (getPrincipalFromQueue(msg.caller) != null) {
+    } else if (getTokenFromQueue(msg.caller) != null) {
       return #err(#pohAlreadyInitiated)
     // this principal tried to link with a modclub account that already linked another principal
     } else if (principalIsBlacklisted(msg.caller)) {
@@ -103,7 +103,7 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
   };
 
   public shared(msg) func isQueued(principal: Principal) : async Bool {
-    switch (getPrincipalFromQueue(principal)) {
+    switch (getTokenFromQueue(principal)) {
       case (?token) {
         return true
       };
@@ -114,7 +114,7 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
   };
 
   public shared query (msg) func isQueuedQuery(principal: Principal) : async Bool {
-    switch (getPrincipalFromQueue(principal)) {
+    switch (getTokenFromQueue(principal)) {
       case (?token) {
         return true
       };
@@ -122,6 +122,10 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
         return false
       }
     }
+  };
+
+  public shared(msg) func getToken() : async ?Text{
+    getTokenFromQueue(msg.caller)
   };
 
   
@@ -145,7 +149,7 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
     blacklist := TrieSet.put<Principal.Principal>(blacklist, principal, Principal.hash(principal), Principal.equal);
   };
 
-  func getPrincipalFromQueue(principal : Principal) : ?Text {
+  func getTokenFromQueue(principal : Principal) : ?Text {
     Trie.get(queue, Types.accountKey(principal), Principal.equal)
   };
 

@@ -26,7 +26,7 @@ type State = {
 const defaultState: State = {
   isAuthed: null,
   principal: null,
-  actor: null,
+  actor: whitelist,
   error: "",
   isLoading: false,
 };
