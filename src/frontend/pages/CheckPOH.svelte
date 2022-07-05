@@ -1,6 +1,5 @@
 <script lang="ts">
   import Button from "../components/Button.svelte";
-  import { onMount } from "svelte";
   import { store } from "../store";
   import type { Result } from "canisters/whitelist/whitelist.did";
   import { fromErr, isOk, fromNullable } from "../utils";
@@ -76,6 +75,7 @@
             REDIRECT_URL +
               `?token=${token}` +
               `&redirect_uri=${encodeURI(window.location.href)}#/poh-completed`,
+            "_self",
           );
         }}>return to modclub</Button
       >
@@ -131,6 +131,7 @@
             REDIRECT_URL +
               `?token=${token}` +
               `&redirect_uri=${encodeURI(window.location.href)}#/poh-completed`,
+            "_self",
           );
         }}>start poh</Button
       >
