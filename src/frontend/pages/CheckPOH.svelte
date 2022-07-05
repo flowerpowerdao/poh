@@ -16,10 +16,13 @@
     if (isOk(res)) {
       state = "ok";
     } else {
-      state = fromErr(res);
-      if (state === "pohAlreadyInitiated" || state === "pohNotCompleted") {
+      if (
+        fromErr(res) === "pohAlreadyInitiated" ||
+        fromErr(res) === "pohNotCompleted"
+      ) {
         token = fromNullable(await $store.actor.getToken());
       }
+      state = fromErr(res);
     }
   }
 
