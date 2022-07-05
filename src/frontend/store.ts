@@ -3,7 +3,6 @@ import type { Principal } from "@dfinity/principal";
 import type { HttpAgent } from "@dfinity/agent";
 import { StoicIdentity } from "ic-stoic-identity";
 import {
-  whitelist,
   createActor,
   canisterId,
   idlFactory,
@@ -26,7 +25,7 @@ type State = {
 const defaultState: State = {
   isAuthed: null,
   principal: null,
-  actor: whitelist,
+  actor: null,
   error: "",
   isLoading: false,
 };
