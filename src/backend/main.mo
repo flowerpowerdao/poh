@@ -56,6 +56,7 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
   };
 
   public shared (msg) func callback(response: Modclub.PohVerificationResponsePlus) {
+    assert(msg.caller == Principal.fromText(Modclub.getModclubId(ENV)));
     ignore handlePohResponse(response, null);
   };
 
