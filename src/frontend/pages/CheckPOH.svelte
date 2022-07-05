@@ -120,7 +120,7 @@
     <svelte:fragment slot="body"
       >please head over to modclub and start the POH process</svelte:fragment
     >
-    <svelte:fragment slot="action">
+    <svelte:fragment slot="actions">
       <Button
         style="btn-primary"
         on:click={() => {
