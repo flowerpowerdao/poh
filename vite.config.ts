@@ -73,6 +73,7 @@ export default defineConfig({
       ...aliases,
     },
   },
+  publicDir: "./src/frontend/public",
   server: {
     fs: {
       allow: ["."],
