@@ -1,18 +1,16 @@
 <script lang="ts">
-  import Login from "./components/Login.svelte";
-  import { store } from "./store";
-
-  import Menu from "./components/Menu.svelte";
-
   import CheckPOH from "./pages/CheckPOH.svelte";
-  import Error from "./components/Error.svelte";
+  import PohCompleted from "./pages/PohCompleted.svelte";
+  import Router from "svelte-spa-router";
+  import Header from "./components/Header.svelte";
+
+  const routes = {
+    "/": CheckPOH,
+    "/poh-completed": PohCompleted,
+  };
 </script>
 
 <div class="h-screen flex flex-col items-center justify-center">
-  {#if $store.isAuthed}
-    <Menu />
-    <CheckPOH />
-  {:else}
-    <Login />
-  {/if}
+  <Header />
+  <Router {routes} />
 </div>

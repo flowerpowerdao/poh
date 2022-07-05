@@ -7,11 +7,12 @@
   import Card from "../components/Card.svelte";
   import { REDIRECT_URL } from "../constants";
 
-  let state: string;
+  let state: string = "loading";
   let token: string;
 
   async function checkStatus() {
     const res: Result = await $store.actor.checkStatus();
+    console.log(res);
     if (isOk(res)) {
       state = "ok";
     } else {
@@ -25,28 +26,51 @@
   onMount(checkStatus);
 </script>
 
-{#if state === "ok"}
+{#if !$store.isAuthed}
+  <Card>
+    <svelte:fragment slot="title">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="stroke-current flex-shrink-0 h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        ><path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+        /></svg
+      >
+
+      not signed in</svelte:fragment
+    >
+    <svelte:fragment slot="body">please sign in to continue.</svelte:fragment>
+  </Card>
+{:else if state === "ok"}
   <Card>
     <svelte:fragment slot="title">success</svelte:fragment>
     <svelte:fragment slot="body">you successfully completed POH</svelte:fragment
     >
   </Card>
+{:else if state === "loading"}
+  <progress class="progress w-56" />
+  <p>checking status ...</p>
 {:else if state === "pohAlreadyInitiated"}
   <Card>
     <svelte:fragment slot="title">POH already initiated</svelte:fragment>
     <svelte:fragment slot="body"
-      >please return to modclub and complete the POH process</svelte:fragment
+      >please return to modclub and complete the POH process. if you completed
+      POH already, please wait for your submission to be checked, this might
+      take a while. you can come back to this page to check.</svelte:fragment
     >
     <svelte:fragment slot="actions">
       <Button
         style="btn-primary"
         on:click={() => {
-          open(
+          window.open(
             REDIRECT_URL +
               `?token=${token}` +
-              `&redirect_uri=${encodeURI(
-                window.location.href,
-              )}/#/poh-completed`,
+              `&redirect_uri=${encodeURI(window.location.href)}#/poh-completed`,
           );
         }}>return to modclub</Button
       >
@@ -94,6 +118,18 @@
     <svelte:fragment slot="body"
       >please head over to modclub and start the POH process</svelte:fragment
     >
+    <svelte:fragment slot="action">
+      <Button
+        style="btn-primary"
+        on:click={() => {
+          window.open(
+            REDIRECT_URL +
+              `?token=${token}` +
+              `&redirect_uri=${encodeURI(window.location.href)}#/poh-completed`,
+          );
+        }}>start poh</Button
+      >
+    </svelte:fragment>
   </Card>
 {:else if state === "notFirstAssociation"}
   <Card>

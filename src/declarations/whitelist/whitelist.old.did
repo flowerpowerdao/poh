@@ -62,6 +62,7 @@ service : {
                               principal;
                               text;
                             }) query;
+  getToken: () -> (opt text);
   getWhitelist: () -> (vec principal);
   getWhitelistQuery: () -> (vec principal) query;
   isBlacklisted: (principal) -> (bool);
