@@ -45,6 +45,7 @@ export interface Whitelist {
   'getBlacklistQuery' : ActorMethod<[], Array<Principal>>,
   'getQueue' : ActorMethod<[], Array<[Principal, string]>>,
   'getQueueQuery' : ActorMethod<[], Array<[Principal, string]>>,
+  'getToken' : ActorMethod<[], [] | [string]>,
   'getWhitelist' : ActorMethod<[], Array<Principal>>,
   'getWhitelistQuery' : ActorMethod<[], Array<Principal>>,
   'isBlacklisted' : ActorMethod<[Principal], boolean>,
