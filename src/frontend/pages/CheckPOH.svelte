@@ -23,7 +23,9 @@
     }
   }
 
-  onMount(checkStatus);
+  $: if ($store.isAuthed) {
+    checkStatus();
+  }
 </script>
 
 {#if !$store.isAuthed}
