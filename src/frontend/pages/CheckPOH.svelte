@@ -74,7 +74,7 @@
           window.open(
             REDIRECT_URL +
               `?token=${token}` +
-              `&redirect_uri=${encodeURI(
+              `&redirect_uri=${encodeURIComponent(
                 window.location.href + "#/poh-completed",
               )}`,
             "_self",
@@ -132,7 +132,7 @@
           window.open(
             REDIRECT_URL +
               `?token=${token}` +
-              `&redirect_uri=${encodeURI(
+              `&redirect_uri=${encodeURIComponent(
                 window.location.href + "#/poh-completed",
               )}`,
             "_self",
