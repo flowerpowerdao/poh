@@ -74,7 +74,9 @@
           window.open(
             REDIRECT_URL +
               `?token=${token}` +
-              `&redirect_uri=${encodeURI(window.location.href)}#/poh-completed`,
+              `&redirect_uri=${encodeURI(
+                window.location.href + "#/poh-completed",
+              )}`,
             "_self",
           );
         }}>return to modclub</Button
@@ -130,7 +132,9 @@
           window.open(
             REDIRECT_URL +
               `?token=${token}` +
-              `&redirect_uri=${encodeURI(window.location.href)}#/poh-completed`,
+              `&redirect_uri=${encodeURI(
+                window.location.href + "#/poh-completed",
+              )}`,
             "_self",
           );
         }}>start poh</Button
