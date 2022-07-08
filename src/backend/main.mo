@@ -22,10 +22,12 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
   stable var whitelist : TrieSet.Set<Principal> = TrieSet.empty();
   // principals in whitelist queue haven't provided POH on modclubs end yet, they will be redirected to modclubs site until
   // we receive the callback moving their principal to `whitelist`
-  stable var queue: Trie.Trie<Principal, Text> = Trie.empty();
+  stable var queue : Trie.Trie<Principal, Text> = Trie.empty();
+  // principals in this queue have completed POH, but it hasn't been reviewed by MODCLUB yet
+  stable var pending : TrieSet.Set<Principal> = TrieSet.empty();
   // principals in blacklist can't complete POH and thus shouldnt trigger subsequent calls to 
   // `verifyHumanity`
-  stable var blacklist: TrieSet.Set<Principal> = TrieSet.empty();
+  stable var blacklist : TrieSet.Set<Principal> = TrieSet.empty();
 
 /******************
 * PUBLIC METHODS *
@@ -37,12 +39,14 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
       return #err(#alreadyWhitelisted)
     // this principal already has a token and has to complete POH
     } else if (getTokenFromQueue(msg.caller) != null) {
-      return #err(#pohAlreadyInitiated)
+      return #err(#pohNotCompleted)
     // this principal tried to link with a modclub account that already linked another principal
     } else if (principalIsBlacklisted(msg.caller)) {
       return #err(#principalBlacklisted)
-    }
-    else {
+    // this principal successfully submitted POH and it's status is pending
+    } else if (principalIsPending(msg.caller)) {
+      return #err(#pending)
+    } else {
       // because the whitelist is a set we don't have to worry about atomicity in this case
       let response = await Modclub.getModclubActor(ENV).verifyHumanity(Principal.toText(msg.caller));
       handlePohResponse(response, ?msg.caller)
@@ -96,10 +100,12 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
   };
 
   public shared(msg) func getQueue(): async [(Principal,Text)] {
+    assert(msg.caller == init_minter);
     Trie.toArray<Principal, Text, (Principal,Text)>(queue, func (principal: Principal, token: Text) {return (principal,token)})
   };
 
   public shared query (msg) func getQueueQuery(): async [(Principal,Text)] {
+    assert(msg.caller == init_minter);
     Trie.toArray<Principal, Text, (Principal,Text)>(queue, func (principal: Principal, token: Text) {return (principal,token)})
   };
 
@@ -125,6 +131,22 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
     }
   };
 
+  public shared(msg) func getPending(): async [Principal] {
+    TrieSet.toArray(pending)
+  };
+  
+  public shared query (msg) func getPendingQuery(): async [Principal] {
+    TrieSet.toArray(pending)
+  };
+
+  public shared(msg) func isPending(principal: Principal) : async Bool {
+    principalIsPending(principal)
+  };
+
+  public shared query (msg) func isPendingQuery(principal: Principal) : async Bool {
+    principalIsPending(principal)
+  };
+
   public shared(msg) func getToken() : async ?Text{
     getTokenFromQueue(msg.caller)
   };
@@ -148,6 +170,18 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
 
   func blacklistPrinicpal(principal : Principal) {
     blacklist := TrieSet.put<Principal.Principal>(blacklist, principal, Principal.hash(principal), Principal.equal);
+  };
+
+  func principalIsPending(principal: Principal) : Bool {
+    TrieSet.mem<Principal.Principal>(pending, principal, Principal.hash(principal), Principal.equal);
+  };
+
+  func addPrincipalToPending(principal : Principal) {
+    pending:= TrieSet.put<Principal.Principal>(pending, principal, Principal.hash(principal), Principal.equal);
+  };
+
+  func deletePrincipalFromPending(principal : Principal) {
+    pending := TrieSet.delete<Principal>(pending,principal, Principal.hash(principal), Principal.equal);
   };
 
   func getTokenFromQueue(principal : Principal) : ?Text {
@@ -179,19 +213,33 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
       // user has successfully verified his first principal
       case (true, #verified) {
         whitelistPrincipal(caller);
-        // make sure we remove the principal from the queue
+        // make sure we remove the principal from the queue and pending
         unqueuePrincipal(caller);
+        deletePrincipalFromPending(caller);
         return #ok()
       };
       // this isn't the first association with the modclub account for this challenge
       case (false, _) {
         blacklistPrinicpal(caller);
+        // make sure we remove the principal from the queue and pending
+        unqueuePrincipal(caller);
+        deletePrincipalFromPending(caller);
         return #err(#notFirstAssociation)
       };
       // poh was rejected
       case (_, #rejected) {
         blacklistPrinicpal(caller);
+        // make sure we remove the principal from the queue and pending
+        unqueuePrincipal(caller);
+        deletePrincipalFromPending(caller);
         return #err(#pohRejected)
+      };
+      // poh was submitted
+      case (_, #pending) {
+        addPrincipalToPending(caller);
+        // make sure we remove the principal from the queue
+        unqueuePrincipal(caller);
+        return #err(#pending)
       };
       // poh hasn't been completed yet
       case (_, _) {
@@ -204,6 +252,9 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
           // because the token should always be present
           case (_) {
             blacklistPrinicpal(caller);
+            // make sure we remove the principal from the queue and pending
+            unqueuePrincipal(caller);
+            deletePrincipalFromPending(caller);
             return #err(#noTokenFound)
           }
         }

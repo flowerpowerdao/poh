@@ -4,10 +4,10 @@
 </script>
 
 <Card>
-  <svelte:fragment slot="title">POH completed</svelte:fragment>
+  <svelte:fragment slot="title">POH submission completed</svelte:fragment>
   <svelte:fragment slot="body"
-    >you successfully completed POH. you can check your status below. please
-    note that it might take a while to check your submission.</svelte:fragment
+    >You successfully completed your POH submission. You can check your status
+    below. Please note that it might take a while to check your submission.</svelte:fragment
   >
   <svelte:fragment slot="actions">
     <Button

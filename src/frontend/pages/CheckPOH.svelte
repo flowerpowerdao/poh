@@ -63,7 +63,7 @@
   <Card>
     <svelte:fragment slot="title">POH already initiated</svelte:fragment>
     <svelte:fragment slot="body"
-      >please return to modclub and complete the POH process. if you completed
+      >Please return to MODCLUB and complete the POH process. if you completed
       POH already, please wait for your submission to be checked, this might
       take a while. you can come back to this page to check.</svelte:fragment
     >
@@ -87,8 +87,11 @@
   <Card>
     <svelte:fragment slot="title">Principal blacklisted</svelte:fragment>
     <svelte:fragment slot="body"
-      >the principal you logged in with is blacklisted and can't be used to
-      complete POH</svelte:fragment
+      >The principal you logged in with is blacklisted and can't be used to
+      complete POH. This is either because your Modclub is already associated
+      with another principal or your POH was rejected. If you want to whitelist
+      mutliple addresses, make sure you create a new Modclub account for all of
+      them.</svelte:fragment
     >
   </Card>
 {:else if state === "alreadyWhitelisted"}
