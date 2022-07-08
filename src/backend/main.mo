@@ -4,6 +4,7 @@ import Result "mo:base/Result";
 import Trie "mo:base/Trie";
 import TrieSet "mo:base/TrieSet";
 
+import Canistergeek "mo:canistergeek/canistergeek";
 import Modclub "mo:modsdk/modclub";
 
 import Types "types";
@@ -14,6 +15,7 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
 *************/
 
   let ENV = "staging";
+  let canistergeekLogger = Canistergeek.Logger();
 
 /****************
 * STABLE STATE *
@@ -28,6 +30,18 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
   // principals in blacklist can't complete POH and thus shouldnt trigger subsequent calls to 
   // `verifyHumanity`
   stable var blacklist : TrieSet.Set<Principal> = TrieSet.empty();
+
+  // canistergeek
+  stable var _canistergeekLoggerUD: ? Canistergeek.LoggerUpgradeData = null;
+    
+  system func preupgrade() {
+    _canistergeekLoggerUD := ? canistergeekLogger.preupgrade();
+  };
+
+  system func postupgrade() { 
+    canistergeekLogger.postupgrade(_canistergeekLoggerUD);
+    _canistergeekLoggerUD := null;
+  };
 
 /******************
 * PUBLIC METHODS *
@@ -49,6 +63,16 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
     } else {
       // because the whitelist is a set we don't have to worry about atomicity in this case
       let response = await Modclub.getModclubActor(ENV).verifyHumanity(Principal.toText(msg.caller));
+      canistergeekLogger.logMessage(
+        "type: checkStatus" # 
+        "\nprincipal: " # response.providerUserId # 
+        "\nstatus: " # debug_show(response.status) #
+        "\nisFirstAssociation: " # debug_show(response.isFirstAssociation) #
+        "\nrequestedAt: " # debug_show(response.requestedAt) #
+        "\nsubmittedAt: " # debug_show(response.submittedAt) #
+        "\ncompletedAt: " # debug_show(response.completedAt) #
+        "\ntoken: " # debug_show(response.token) 
+        );
       handlePohResponse(response, ?msg.caller)
     }
   };
@@ -61,9 +85,32 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
 
   public shared (msg) func callback(response: Modclub.PohVerificationResponsePlus) {
     assert(msg.caller == Principal.fromText(Modclub.getModclubId(ENV)));
+      canistergeekLogger.logMessage(
+        "type: callback" # 
+        "\nprincipal: " # response.providerUserId # 
+        "\nstatus: " # debug_show(response.status) #
+        "\nisFirstAssociation: " # debug_show(response.isFirstAssociation) #
+        "\nrequestedAt: " # debug_show(response.requestedAt) #
+        "\nsubmittedAt: " # debug_show(response.submittedAt) #
+        "\ncompletedAt: " # debug_show(response.completedAt) #
+        "\ntoken: " # debug_show(response.token) 
+        );
     ignore handlePohResponse(response, null);
   };
 
+// canistergeek
+  /**
+  * Returns collected log messages based on passed parameters.
+  * Called from browser.
+  */
+  public query ({caller}) func getCanisterLog(request: ?Canistergeek.CanisterLogRequest) : async ?Canistergeek.CanisterLogResponse {
+    validateCaller(caller);
+    canistergeekLogger.getLog(request);
+  };
+  
+  private func validateCaller(principal: Principal) : () {
+    assert( principal == Principal.fromText("ikywv-z7xvl-xavcg-ve6kg-dbbtx-wy3gy-qbtwp-7ylai-yl4lc-lwetg-kqe")) // canistergeek principal
+  };
 
 
 // getters
