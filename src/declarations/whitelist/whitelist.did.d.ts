@@ -1,18 +1,52 @@
 import type { Principal } from '@dfinity/principal';
 import type { ActorMethod } from '@dfinity/agent';
 
+export type CanisterLogFeature = { 'filterMessageByContains' : null } |
+  { 'filterMessageByRegex' : null };
+export interface CanisterLogMessages {
+  'data' : Array<LogMessagesData>,
+  'lastAnalyzedMessageTimeNanos' : [] | [Nanos],
+}
+export interface CanisterLogMessagesInfo {
+  'features' : Array<[] | [CanisterLogFeature]>,
+  'lastTimeNanos' : [] | [Nanos],
+  'count' : number,
+  'firstTimeNanos' : [] | [Nanos],
+}
+export type CanisterLogRequest = { 'getMessagesInfo' : null } |
+  { 'getMessages' : GetLogMessagesParameters } |
+  { 'getLatestMessages' : GetLatestLogMessagesParameters };
+export type CanisterLogResponse = { 'messagesInfo' : CanisterLogMessagesInfo } |
+  { 'messages' : CanisterLogMessages };
 export interface ChallengeResponse {
   'status' : PohChallengeStatus,
   'completedOn' : [] | [bigint],
   'challengeId' : string,
 }
-export type CheckStatusError = { 'pohAlreadyInitiated' : null } |
-  { 'principalBlacklisted' : null } |
+export type CheckStatusError = { 'principalBlacklisted' : null } |
+  { 'pending' : null } |
   { 'alreadyWhitelisted' : null } |
   { 'noTokenFound' : null } |
   { 'notFirstAssociation' : null } |
   { 'pohNotCompleted' : null } |
   { 'pohRejected' : null };
+export interface GetLatestLogMessagesParameters {
+  'upToTimeNanos' : [] | [Nanos],
+  'count' : number,
+  'filter' : [] | [GetLogMessagesFilter],
+}
+export interface GetLogMessagesFilter {
+  'analyzeCount' : number,
+  'messageRegex' : [] | [string],
+  'messageContains' : [] | [string],
+}
+export interface GetLogMessagesParameters {
+  'count' : number,
+  'filter' : [] | [GetLogMessagesFilter],
+  'fromTimeNanos' : [] | [Nanos],
+}
+export interface LogMessagesData { 'timeNanos' : Nanos, 'message' : string }
+export type Nanos = bigint;
 export type PohChallengeStatus = { 'notSubmitted' : null } |
   { 'verified' : null } |
   { 'expired' : null } |
@@ -43,6 +77,12 @@ export interface Whitelist {
   'checkStatus' : ActorMethod<[], Result>,
   'getBlacklist' : ActorMethod<[], Array<Principal>>,
   'getBlacklistQuery' : ActorMethod<[], Array<Principal>>,
+  'getCanisterLog' : ActorMethod<
+    [[] | [CanisterLogRequest]],
+    [] | [CanisterLogResponse],
+  >,
+  'getPending' : ActorMethod<[], Array<Principal>>,
+  'getPendingQuery' : ActorMethod<[], Array<Principal>>,
   'getQueue' : ActorMethod<[], Array<[Principal, string]>>,
   'getQueueQuery' : ActorMethod<[], Array<[Principal, string]>>,
   'getToken' : ActorMethod<[], [] | [string]>,
@@ -50,6 +90,8 @@ export interface Whitelist {
   'getWhitelistQuery' : ActorMethod<[], Array<Principal>>,
   'isBlacklisted' : ActorMethod<[Principal], boolean>,
   'isBlacklistedQuery' : ActorMethod<[Principal], boolean>,
+  'isPending' : ActorMethod<[Principal], boolean>,
+  'isPendingQuery' : ActorMethod<[Principal], boolean>,
   'isQueued' : ActorMethod<[Principal], boolean>,
   'isQueuedQuery' : ActorMethod<[Principal], boolean>,
   'isWhitelisted' : ActorMethod<[Principal], boolean>,

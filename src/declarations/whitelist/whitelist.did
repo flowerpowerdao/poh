@@ -4,6 +4,10 @@ type Whitelist =
    checkStatus: () -> (Result);
    getBlacklist: () -> (vec principal);
    getBlacklistQuery: () -> (vec principal) query;
+   getCanisterLog: (opt CanisterLogRequest) ->
+    (opt CanisterLogResponse) query;
+   getPending: () -> (vec principal);
+   getPendingQuery: () -> (vec principal) query;
    getQueue: () -> (vec record {
                           principal;
                           text;
@@ -17,6 +21,8 @@ type Whitelist =
    getWhitelistQuery: () -> (vec principal) query;
    isBlacklisted: (principal) -> (bool);
    isBlacklistedQuery: (principal) -> (bool) query;
+   isPending: (principal) -> (bool);
+   isPendingQuery: (principal) -> (bool) query;
    isQueued: (principal) -> (bool);
    isQueuedQuery: (principal) -> (bool) query;
    isWhitelisted: (principal) -> (bool);
@@ -58,12 +64,36 @@ type PohChallengeStatus =
    rejected;
    verified;
  };
+type Nanos = nat64;
+type LogMessagesData = 
+ record {
+   message: text;
+   timeNanos: Nanos;
+ };
+type GetLogMessagesParameters = 
+ record {
+   count: nat32;
+   filter: opt GetLogMessagesFilter;
+   fromTimeNanos: opt Nanos;
+ };
+type GetLogMessagesFilter = 
+ record {
+   analyzeCount: nat32;
+   messageContains: opt text;
+   messageRegex: opt text;
+ };
+type GetLatestLogMessagesParameters = 
+ record {
+   count: nat32;
+   filter: opt GetLogMessagesFilter;
+   upToTimeNanos: opt Nanos;
+ };
 type CheckStatusError = 
  variant {
    alreadyWhitelisted;
    noTokenFound;
    notFirstAssociation;
-   pohAlreadyInitiated;
+   pending;
    pohNotCompleted;
    pohRejected;
    principalBlacklisted;
@@ -73,5 +103,33 @@ type ChallengeResponse =
    challengeId: text;
    completedOn: opt int;
    status: PohChallengeStatus;
+ };
+type CanisterLogResponse = 
+ variant {
+   messages: CanisterLogMessages;
+   messagesInfo: CanisterLogMessagesInfo;
+ };
+type CanisterLogRequest = 
+ variant {
+   getLatestMessages: GetLatestLogMessagesParameters;
+   getMessages: GetLogMessagesParameters;
+   getMessagesInfo;
+ };
+type CanisterLogMessagesInfo = 
+ record {
+   count: nat32;
+   features: vec opt CanisterLogFeature;
+   firstTimeNanos: opt Nanos;
+   lastTimeNanos: opt Nanos;
+ };
+type CanisterLogMessages = 
+ record {
+   data: vec LogMessagesData;
+   lastAnalyzedMessageTimeNanos: opt Nanos;
+ };
+type CanisterLogFeature = 
+ variant {
+   filterMessageByContains;
+   filterMessageByRegex;
  };
 service : () -> Whitelist

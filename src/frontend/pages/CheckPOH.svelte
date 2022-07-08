@@ -15,10 +15,7 @@
     if (isOk(res)) {
       state = "ok";
     } else {
-      if (
-        fromErr(res) === "pohAlreadyInitiated" ||
-        fromErr(res) === "pohNotCompleted"
-      ) {
+      if (fromErr(res) === "pohNotCompleted") {
         token = fromNullable(await $store.actor.getToken());
       }
       state = fromErr(res);
@@ -46,41 +43,28 @@
         /></svg
       >
 
-      not signed in</svelte:fragment
+      Not signed in</svelte:fragment
     >
-    <svelte:fragment slot="body">please sign in to continue.</svelte:fragment>
+    <svelte:fragment slot="body">Please sign in to continue.</svelte:fragment>
   </Card>
 {:else if state === "ok"}
   <Card>
-    <svelte:fragment slot="title">success</svelte:fragment>
-    <svelte:fragment slot="body">you successfully completed POH</svelte:fragment
+    <svelte:fragment slot="title">Success</svelte:fragment>
+    <svelte:fragment slot="body"
+      >You successfully completed POH 🎉</svelte:fragment
     >
   </Card>
 {:else if state === "loading"}
   <progress class="progress w-56" />
   <p>checking status ...</p>
-{:else if state === "pohAlreadyInitiated"}
+{:else if state === "pending"}
   <Card>
-    <svelte:fragment slot="title">POH already initiated</svelte:fragment>
-    <svelte:fragment slot="body"
-      >Please return to MODCLUB and complete the POH process. if you completed
-      POH already, please wait for your submission to be checked, this might
-      take a while. you can come back to this page to check.</svelte:fragment
-    >
-    <svelte:fragment slot="actions">
-      <Button
-        style="btn-primary"
-        on:click={() => {
-          window.open(
-            REDIRECT_URL +
-              `?token=${token}` +
-              `&redirect_uri=${encodeURIComponent(
-                window.location.href + "#/poh-completed",
-              )}`,
-            "_self",
-          );
-        }}>return to modclub</Button
-      >
+    <svelte:fragment slot="title">POH successfully submitted</svelte:fragment>
+    <svelte:fragment slot="body">
+      You successfully submitted POH. <br />
+      The submission is currently being reviewed by MODCLUB, this process might take
+      a few hours. <br />
+      You can revisit this page to check the status of your submission any time!
     </svelte:fragment>
   </Card>
 {:else if state === "principalBlacklisted"}
@@ -88,10 +72,11 @@
     <svelte:fragment slot="title">Principal blacklisted</svelte:fragment>
     <svelte:fragment slot="body"
       >The principal you logged in with is blacklisted and can't be used to
-      complete POH. This is either because your Modclub is already associated
-      with another principal or your POH was rejected. If you want to whitelist
-      mutliple addresses, make sure you create a new Modclub account for all of
-      them.</svelte:fragment
+      complete POH. <br />
+      This is either because your MODLCUB is already associated with another principal
+      or your POH was rejected. <br />
+      If you want to whitelist mutliple addresses, make sure you create a new MODLCUB
+      account for all of them.</svelte:fragment
     >
   </Card>
 {:else if state === "alreadyWhitelisted"}
@@ -99,34 +84,36 @@
     <svelte:fragment slot="title">Principal already whitelisted</svelte:fragment
     >
     <svelte:fragment slot="body"
-      >the principal you logged in with is already whitelisted
+      >The principal you logged in with is already whitelisted.
     </svelte:fragment>
   </Card>
 {:else if state === "noTokenFound"}
   <Card>
     <svelte:fragment slot="title">No verification token found</svelte:fragment>
     <svelte:fragment slot="body"
-      >Modclub didn't return a token to complete POH. This can have numerous
+      >MODCLUB didn't return a token to complete POH. This can have numerous
       reasons. For security reasons your principal is blacklisted. If you want
       to verify again, please login using another principal.
     </svelte:fragment>
   </Card>
 {:else if state === "notFirstAssociation"}
   <Card>
-    <svelte:fragment slot="title">no the first association</svelte:fragment>
+    <svelte:fragment slot="title">Not the first association</svelte:fragment>
     <svelte:fragment slot="body">
-      you tried using a second principal for POH with your modclub account.
-      please note that for this challenge you a required to go through the POH
-      process for every principal you would like to whitelist. to proceed,
-      create a new modclub account and pair it with a new principal. the
-      principal you logged in with is blacklisted.
+      You tried using a another principal for POH with your MODCLUB account.<br
+      />
+      Please note that for this challenge you a required to go through the POH process
+      for every principal you would like to whitelist. <br />
+      To proceed, create a new MODLCUB account and pair it with a new principal.
+      The principal you are logged in with currently is blacklisted and can't be
+      whitelisted anymore.
     </svelte:fragment>
   </Card>
 {:else if state === "pohNotCompleted"}
   <Card>
     <svelte:fragment slot="title">Ready to start POH</svelte:fragment>
     <svelte:fragment slot="body"
-      >please head over to modclub and start the POH process</svelte:fragment
+      >Please head over to MODCLUB and start the POH process.</svelte:fragment
     >
     <svelte:fragment slot="actions">
       <Button
@@ -148,8 +135,8 @@
   <Card>
     <svelte:fragment slot="title">POH rejected</svelte:fragment>
     <svelte:fragment slot="body">
-      your POH attempt has been rejected. please try again with another
-      principal and modclub account.
+      Your POH attempt has been rejected. <br />
+      Please try again with another principal and MODCLUB account.
     </svelte:fragment>
   </Card>
 {/if}
