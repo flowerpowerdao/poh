@@ -64,7 +64,7 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
       // because the whitelist is a set we don't have to worry about atomicity in this case
       let response = await Modclub.getModclubActor(ENV).verifyHumanity(Principal.toText(msg.caller));
       canistergeekLogger.logMessage(
-        "type: checkStatus" # 
+        "\ntype: checkStatus" # 
         "\nprincipal: " # response.providerUserId # 
         "\nstatus: " # debug_show(response.status) #
         "\nisFirstAssociation: " # debug_show(response.isFirstAssociation) #
