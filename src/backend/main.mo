@@ -71,7 +71,7 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
         "\nrequestedAt: " # debug_show(response.requestedAt) #
         "\nsubmittedAt: " # debug_show(response.submittedAt) #
         "\ncompletedAt: " # debug_show(response.completedAt) #
-        "\ntoken: " # debug_show(response.token) 
+        "\ntoken: " # debug_show(response.token) # "\n"
         );
       handlePohResponse(response, ?msg.caller)
     }

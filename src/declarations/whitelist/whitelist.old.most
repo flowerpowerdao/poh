@@ -6,9 +6,18 @@ type Hash = Nat32;
 type Key<K> = {hash : Hash; key : K};
 type Leaf<K, V> = {keyvals : AssocList__1<Key<K>, V>; size : Nat};
 type List<T> = ?(T, List<T>);
+type LogMessageArray = [LogMessagesData];
+type LogMessagesData = {message : Text; timeNanos : Nanos};
+type LoggerUpgradeData = UpgradeData__1;
+type Nanos = Nat64;
 type Trie<K, V> = {#branch : Branch<K, V>; #empty; #leaf : Leaf<K, V>};
+type UpgradeData__1 =
+  {#v1 : {full : Bool; maxCount : Nat; next : Nat; queue : LogMessageArray}};
 actor {
+  stable var _canistergeekLoggerUD : ?LoggerUpgradeData;
   stable var blacklist :
+    {#branch : Branch<Principal, ()>; #empty; #leaf : Leaf<Principal, ()>};
+  stable var pending :
     {#branch : Branch<Principal, ()>; #empty; #leaf : Leaf<Principal, ()>};
   stable var queue :
     {
