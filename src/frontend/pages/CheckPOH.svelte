@@ -61,11 +61,11 @@
       >All whitelist spots have been awarded 😪</svelte:fragment
     >
   </Card>
-{:else if state === "ok"}
+{:else if state === "alreadyWhitelisted"}
   <Card>
     <svelte:fragment slot="title">Success</svelte:fragment>
     <svelte:fragment slot="body"
-      >You successfully completed POH 🎉</svelte:fragment
+      >Your principal is whitelisted! 🎉</svelte:fragment
     >
   </Card>
 {:else if state === "loading"}
@@ -93,7 +93,7 @@
       account for all of them.</svelte:fragment
     >
   </Card>
-{:else if state === "alreadyWhitelisted"}
+{:else if state === "ok"}
   <Card>
     <svelte:fragment slot="title">Principal already whitelisted</svelte:fragment
     >
