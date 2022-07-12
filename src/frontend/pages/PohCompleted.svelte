@@ -6,8 +6,9 @@
 <Card>
   <svelte:fragment slot="title">POH submission completed</svelte:fragment>
   <svelte:fragment slot="body"
-    >You successfully completed your POH submission. You can check your status
-    below. Please note that it might take a while to check your submission.</svelte:fragment
+    >You successfully completed your POH submission. <br />
+    You can check your status below. <br />
+    Please note that it might take a while to check your submission.</svelte:fragment
   >
   <svelte:fragment slot="actions">
     <Button
