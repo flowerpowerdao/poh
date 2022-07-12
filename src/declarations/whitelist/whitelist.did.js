@@ -34,6 +34,7 @@ export const idlFactory = ({ IDL }) => {
   const CheckStatusError = IDL.Variant({
     'principalBlacklisted' : IDL.Null,
     'pending' : IDL.Null,
+    'whitelistIsFull' : IDL.Null,
     'alreadyWhitelisted' : IDL.Null,
     'noTokenFound' : IDL.Null,
     'notFirstAssociation' : IDL.Null,
@@ -118,6 +119,7 @@ export const idlFactory = ({ IDL }) => {
     'isWhitelisted' : IDL.Func([IDL.Principal], [IDL.Bool], []),
     'isWhitelistedQuery' : IDL.Func([IDL.Principal], [IDL.Bool], ['query']),
     'registerCallback' : IDL.Func([], [], ['oneway']),
+    'whitelistIsFull' : IDL.Func([], [IDL.Bool], ['query']),
   });
   return Whitelist;
 };

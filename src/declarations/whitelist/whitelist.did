@@ -28,6 +28,7 @@ type Whitelist =
    isWhitelisted: (principal) -> (bool);
    isWhitelistedQuery: (principal) -> (bool) query;
    registerCallback: () -> () oneway;
+   whitelistIsFull: () -> (bool) query;
  };
 type Result = 
  variant {
@@ -97,6 +98,7 @@ type CheckStatusError =
    pohNotCompleted;
    pohRejected;
    principalBlacklisted;
+   whitelistIsFull;
  };
 type ChallengeResponse = 
  record {

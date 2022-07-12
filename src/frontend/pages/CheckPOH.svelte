@@ -5,9 +5,11 @@
   import { fromErr, isOk, fromNullable } from "../utils";
   import Card from "../components/Card.svelte";
   import { REDIRECT_URL } from "../constants";
+  import { onMount } from "svelte";
 
   let state: string = "loading";
   let token: string;
+  let whitelistIsFull = false;
 
   async function checkStatus() {
     const res: Result = await $store.actor.checkStatus();
@@ -25,9 +27,13 @@
   $: if ($store.isAuthed) {
     checkStatus();
   }
+
+  onMount(async () => {
+    whitelistIsFull = await $store.actor.whitelistIsFull();
+  });
 </script>
 
-{#if !$store.isAuthed}
+{#if !$store.isAuthed && !whitelistIsFull}
   <Card>
     <svelte:fragment slot="title">
       <svg
@@ -46,6 +52,13 @@
       Not signed in</svelte:fragment
     >
     <svelte:fragment slot="body">Please sign in to continue.</svelte:fragment>
+  </Card>
+{:else if whitelistIsFull}
+  <Card>
+    <svelte:fragment slot="title">Whitelist is full</svelte:fragment>
+    <svelte:fragment slot="body"
+      >All whitelist spots have been awarded 😪</svelte:fragment
+    >
   </Card>
 {:else if state === "ok"}
   <Card>

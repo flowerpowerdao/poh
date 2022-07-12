@@ -25,6 +25,7 @@ export interface ChallengeResponse {
 }
 export type CheckStatusError = { 'principalBlacklisted' : null } |
   { 'pending' : null } |
+  { 'whitelistIsFull' : null } |
   { 'alreadyWhitelisted' : null } |
   { 'noTokenFound' : null } |
   { 'notFirstAssociation' : null } |
@@ -97,5 +98,6 @@ export interface Whitelist {
   'isWhitelisted' : ActorMethod<[Principal], boolean>,
   'isWhitelistedQuery' : ActorMethod<[Principal], boolean>,
   'registerCallback' : ActorMethod<[], undefined>,
+  'whitelistIsFull' : ActorMethod<[], boolean>,
 }
 export interface _SERVICE extends Whitelist {}

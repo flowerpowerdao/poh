@@ -15,6 +15,7 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
 *************/
 
   let ENV = "staging";
+  let whitelistSize = 3753;
   let canistergeekLogger = Canistergeek.Logger();
 
 /****************
@@ -93,9 +94,13 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
         "\nrequestedAt: " # debug_show(response.requestedAt) #
         "\nsubmittedAt: " # debug_show(response.submittedAt) #
         "\ncompletedAt: " # debug_show(response.completedAt) #
-        "\ntoken: " # debug_show(response.token) 
+        "\ntoken: " # debug_show(response.token) # "\n\n"
         );
     ignore handlePohResponse(response, null);
+  };
+
+  public shared query (msg) func whitelistIsFull() : async Bool {
+    whitelistIsFullInternal()
   };
 
 // canistergeek
@@ -209,6 +214,14 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
 
   func whitelistPrincipal(principal : Principal) {
     whitelist := TrieSet.put<Principal.Principal>(whitelist, principal, Principal.hash(principal), Principal.equal);
+  };
+
+  func whitelistIsFullInternal(): Bool {
+    if (TrieSet.size(whitelist) > whitelistSize) {
+      return true
+    } else {
+      return false
+    }
   };
 
   func principalIsBlacklisted(principal: Principal) : Bool {

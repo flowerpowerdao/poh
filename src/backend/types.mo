@@ -10,7 +10,8 @@ module {
     #noTokenFound; 
     #pohNotCompleted; 
     #principalBlacklisted;
-    #pending
+    #pending;
+    #whitelistIsFull
   };
 
   public func accountKey(t: Principal) : Trie.Key<Principal> = { key = t; hash = Principal.hash t };
