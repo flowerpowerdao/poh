@@ -87,7 +87,7 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
   public shared (msg) func callback(response: Modclub.PohVerificationResponsePlus) {
     assert(msg.caller == Principal.fromText(Modclub.getModclubId(ENV)));
       canistergeekLogger.logMessage(
-        "type: callback" # 
+        "\ntype: callback" # 
         "\nprincipal: " # response.providerUserId # 
         "\nstatus: " # debug_show(response.status) #
         "\nisFirstAssociation: " # debug_show(response.isFirstAssociation) #
