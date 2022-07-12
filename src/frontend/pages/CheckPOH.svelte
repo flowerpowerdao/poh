@@ -6,6 +6,7 @@
   import Card from "../components/Card.svelte";
   import { REDIRECT_URL } from "../constants";
   import { onMount } from "svelte";
+  import { whitelist } from "canisters/whitelist";
 
   let state: string = "loading";
   let token: string;
@@ -29,7 +30,7 @@
   }
 
   onMount(async () => {
-    whitelistIsFull = await $store.actor.whitelistIsFull();
+    whitelistIsFull = await whitelist.whitelistIsFull();
   });
 </script>
 
