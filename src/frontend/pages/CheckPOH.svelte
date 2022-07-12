@@ -134,7 +134,7 @@
         on:click={() => {
           window.open(
             REDIRECT_URL +
-              `?token=${token}` +
+              `&token=${token}` +
               `&redirect_uri=${encodeURIComponent(
                 window.location.href + "#/poh-completed",
               )}`,

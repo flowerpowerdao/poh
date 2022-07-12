@@ -66,6 +66,7 @@ type CheckStatusError =
    pohNotCompleted;
    pohRejected;
    principalBlacklisted;
+   whitelistIsFull;
  };
 type ChallengeResponse = 
  record {
@@ -129,4 +130,5 @@ service : {
   isWhitelisted: (principal) -> (bool);
   isWhitelistedQuery: (principal) -> (bool) query;
   registerCallback: () -> () oneway;
+  whitelistIsFull: () -> (bool) query;
 }
