@@ -49,6 +49,10 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
 ******************/
 
   public shared(msg) func checkStatus() : async Result.Result<(), Types.CheckStatusError> {
+    // check if whitelist is already full
+    if(whitelistIsFullInternal()) {
+      return #err(#whitelistIsFull)
+    };
     // this principal is already whitelisted
     if (principalIsWhitelisted(msg.caller)) {
       return #err(#alreadyWhitelisted)
@@ -203,6 +207,9 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
     getTokenFromQueue(msg.caller)
   };
 
+  public shared(msg) func remainingSpots() : async Nat {
+    whitelistSize - TrieSet.size(whitelist)
+  };
   
 /*******************
 * PRIVATE METHODS *
@@ -213,11 +220,12 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
   };
 
   func whitelistPrincipal(principal : Principal) {
+    assert(whitelistIsFullInternal() == false);
     whitelist := TrieSet.put<Principal.Principal>(whitelist, principal, Principal.hash(principal), Principal.equal);
   };
 
   func whitelistIsFullInternal(): Bool {
-    if (TrieSet.size(whitelist) > whitelistSize) {
+    if (TrieSet.size(whitelist) >= whitelistSize) {
       return true
     } else {
       return false

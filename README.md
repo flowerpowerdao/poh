@@ -1,3 +1,7 @@
+# setup
+- set `ENV` to production
+- set `whitelistSize` to correct value
+
 # add provider admin
 
 - provide plug or stoic id principal or ii principal for staging
