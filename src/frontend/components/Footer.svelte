@@ -24,8 +24,8 @@
       <div class="stat-title">Whitelist Spots left</div>
       <div class="stat-value">{spotsLeft}</div>
       <div class="stat-desc">
-        {100 - (Number(spotsLeft) / Number(whitelistSize)) * 100}% already
-        claimed
+        {Math.round(100 - (Number(spotsLeft) / Number(whitelistSize)) * 100)}%
+        already claimed
       </div>
     </div>
   </div>
