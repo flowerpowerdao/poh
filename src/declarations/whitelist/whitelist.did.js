@@ -110,6 +110,7 @@ export const idlFactory = ({ IDL }) => {
     'getToken' : IDL.Func([], [IDL.Opt(IDL.Text)], []),
     'getWhitelist' : IDL.Func([], [IDL.Vec(IDL.Principal)], []),
     'getWhitelistQuery' : IDL.Func([], [IDL.Vec(IDL.Principal)], ['query']),
+    'getWhitelistSize' : IDL.Func([], [IDL.Nat], ['query']),
     'isBlacklisted' : IDL.Func([IDL.Principal], [IDL.Bool], []),
     'isBlacklistedQuery' : IDL.Func([IDL.Principal], [IDL.Bool], ['query']),
     'isPending' : IDL.Func([IDL.Principal], [IDL.Bool], []),
@@ -119,6 +120,7 @@ export const idlFactory = ({ IDL }) => {
     'isWhitelisted' : IDL.Func([IDL.Principal], [IDL.Bool], []),
     'isWhitelistedQuery' : IDL.Func([IDL.Principal], [IDL.Bool], ['query']),
     'registerCallback' : IDL.Func([], [], ['oneway']),
+    'remainingSpots' : IDL.Func([], [IDL.Nat], ['query']),
     'whitelistIsFull' : IDL.Func([], [IDL.Bool], ['query']),
   });
   return Whitelist;

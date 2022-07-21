@@ -207,8 +207,12 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
     getTokenFromQueue(msg.caller)
   };
 
-  public shared(msg) func remainingSpots() : async Nat {
+  public shared query(msg) func remainingSpots() : async Nat {
     whitelistSize - TrieSet.size(whitelist)
+  };
+
+  public shared query(msg) func getWhitelistSize() : async Nat {
+    whitelistSize
   };
   
 /*******************

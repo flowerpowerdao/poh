@@ -89,6 +89,7 @@ export interface Whitelist {
   'getToken' : ActorMethod<[], [] | [string]>,
   'getWhitelist' : ActorMethod<[], Array<Principal>>,
   'getWhitelistQuery' : ActorMethod<[], Array<Principal>>,
+  'getWhitelistSize' : ActorMethod<[], bigint>,
   'isBlacklisted' : ActorMethod<[Principal], boolean>,
   'isBlacklistedQuery' : ActorMethod<[Principal], boolean>,
   'isPending' : ActorMethod<[Principal], boolean>,
@@ -98,6 +99,7 @@ export interface Whitelist {
   'isWhitelisted' : ActorMethod<[Principal], boolean>,
   'isWhitelistedQuery' : ActorMethod<[Principal], boolean>,
   'registerCallback' : ActorMethod<[], undefined>,
+  'remainingSpots' : ActorMethod<[], bigint>,
   'whitelistIsFull' : ActorMethod<[], boolean>,
 }
 export interface _SERVICE extends Whitelist {}

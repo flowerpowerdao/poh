@@ -19,6 +19,7 @@ type Whitelist =
    getToken: () -> (opt text);
    getWhitelist: () -> (vec principal);
    getWhitelistQuery: () -> (vec principal) query;
+   getWhitelistSize: () -> (nat) query;
    isBlacklisted: (principal) -> (bool);
    isBlacklistedQuery: (principal) -> (bool) query;
    isPending: (principal) -> (bool);
@@ -28,6 +29,7 @@ type Whitelist =
    isWhitelisted: (principal) -> (bool);
    isWhitelistedQuery: (principal) -> (bool) query;
    registerCallback: () -> () oneway;
+   remainingSpots: () -> (nat) query;
    whitelistIsFull: () -> (bool) query;
  };
 type Result = 

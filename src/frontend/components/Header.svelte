@@ -7,7 +7,6 @@
   let randomLogo = Math.floor(Math.random() * 18) + 1;
 </script>
 
-<!-- desktop -->
 <div class="fixed top-0 inset-x-0 z-10 flex justify-between">
   <a href="/#">
     <img
