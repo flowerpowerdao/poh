@@ -6,6 +6,7 @@ type Whitelist =
    getBlacklistQuery: () -> (vec principal) query;
    getCanisterLog: (opt CanisterLogRequest) ->
     (opt CanisterLogResponse) query;
+   getOwner: () -> (principal) query;
    getPending: () -> (vec principal);
    getPendingQuery: () -> (vec principal) query;
    getQueue: () -> (vec record {
@@ -28,8 +29,9 @@ type Whitelist =
    isQueuedQuery: (principal) -> (bool) query;
    isWhitelisted: (principal) -> (bool);
    isWhitelistedQuery: (principal) -> (bool) query;
-   registerCallback: () -> () oneway;
+   registerCallback: () -> (text);
    remainingSpots: () -> (nat) query;
+   setup: () -> () oneway;
    whitelistIsFull: () -> (bool) query;
  };
 type Result = 

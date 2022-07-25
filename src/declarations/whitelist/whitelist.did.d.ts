@@ -82,6 +82,7 @@ export interface Whitelist {
     [[] | [CanisterLogRequest]],
     [] | [CanisterLogResponse],
   >,
+  'getOwner' : ActorMethod<[], Principal>,
   'getPending' : ActorMethod<[], Array<Principal>>,
   'getPendingQuery' : ActorMethod<[], Array<Principal>>,
   'getQueue' : ActorMethod<[], Array<[Principal, string]>>,
@@ -98,8 +99,9 @@ export interface Whitelist {
   'isQueuedQuery' : ActorMethod<[Principal], boolean>,
   'isWhitelisted' : ActorMethod<[Principal], boolean>,
   'isWhitelistedQuery' : ActorMethod<[Principal], boolean>,
-  'registerCallback' : ActorMethod<[], undefined>,
+  'registerCallback' : ActorMethod<[], string>,
   'remainingSpots' : ActorMethod<[], bigint>,
+  'setup' : ActorMethod<[], undefined>,
   'whitelistIsFull' : ActorMethod<[], boolean>,
 }
 export interface _SERVICE extends Whitelist {}

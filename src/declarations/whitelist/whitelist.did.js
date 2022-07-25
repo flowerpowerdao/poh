@@ -95,6 +95,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(CanisterLogResponse)],
         ['query'],
       ),
+    'getOwner' : IDL.Func([], [IDL.Principal], ['query']),
     'getPending' : IDL.Func([], [IDL.Vec(IDL.Principal)], []),
     'getPendingQuery' : IDL.Func([], [IDL.Vec(IDL.Principal)], ['query']),
     'getQueue' : IDL.Func(
@@ -119,8 +120,9 @@ export const idlFactory = ({ IDL }) => {
     'isQueuedQuery' : IDL.Func([IDL.Principal], [IDL.Bool], ['query']),
     'isWhitelisted' : IDL.Func([IDL.Principal], [IDL.Bool], []),
     'isWhitelistedQuery' : IDL.Func([IDL.Principal], [IDL.Bool], ['query']),
-    'registerCallback' : IDL.Func([], [], ['oneway']),
+    'registerCallback' : IDL.Func([], [IDL.Text], []),
     'remainingSpots' : IDL.Func([], [IDL.Nat], ['query']),
+    'setup' : IDL.Func([], [], ['oneway']),
     'whitelistIsFull' : IDL.Func([], [IDL.Bool], ['query']),
   });
   return Whitelist;
