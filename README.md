@@ -4,7 +4,7 @@
 - reinstall canister to wipe WL state
 - add proviver by calling `setup`
 - add callback by calling `registerCallback`
-- add date gate for backend and frontend so whitelisting doesn't start early
+- ~~add date gate for backend and frontend so whitelisting doesn't start early~~
 - ~~change modclub frontend canister id`ljyte-qiaaa-aaaah-qaiva-cai`~~
 
 # add provider admin

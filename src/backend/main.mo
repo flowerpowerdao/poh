@@ -235,6 +235,14 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
   public shared query(msg) func getWhitelistSize() : async Nat {
     whitelistSize
   };
+
+  public shared query(msg) func whitelistHasStarted() : async Bool {
+    Time.now() > startDate
+  };
+
+  public shared query(msg) func getStartDate() : async Time.Time {
+    startDate
+  };
   
 /*******************
 * PRIVATE METHODS *

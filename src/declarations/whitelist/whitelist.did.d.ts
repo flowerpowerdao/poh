@@ -25,6 +25,7 @@ export interface ChallengeResponse {
 }
 export type CheckStatusError = { 'principalBlacklisted' : null } |
   { 'pending' : null } |
+  { 'whitelistNotStarted' : null } |
   { 'whitelistIsFull' : null } |
   { 'alreadyWhitelisted' : null } |
   { 'noTokenFound' : null } |
@@ -73,6 +74,7 @@ export type PohVerificationStatus = { 'notSubmitted' : null } |
   { 'rejected' : null };
 export type Result = { 'ok' : null } |
   { 'err' : CheckStatusError };
+export type Time = bigint;
 export interface Whitelist {
   'callback' : ActorMethod<[PohVerificationResponsePlus], undefined>,
   'checkStatus' : ActorMethod<[], Result>,
@@ -87,6 +89,7 @@ export interface Whitelist {
   'getPendingQuery' : ActorMethod<[], Array<Principal>>,
   'getQueue' : ActorMethod<[], Array<[Principal, string]>>,
   'getQueueQuery' : ActorMethod<[], Array<[Principal, string]>>,
+  'getStartDate' : ActorMethod<[], Time>,
   'getToken' : ActorMethod<[], [] | [string]>,
   'getWhitelist' : ActorMethod<[], Array<Principal>>,
   'getWhitelistQuery' : ActorMethod<[], Array<Principal>>,
@@ -102,6 +105,7 @@ export interface Whitelist {
   'registerCallback' : ActorMethod<[], string>,
   'remainingSpots' : ActorMethod<[], bigint>,
   'setup' : ActorMethod<[], undefined>,
+  'whitelistHasStarted' : ActorMethod<[], boolean>,
   'whitelistIsFull' : ActorMethod<[], boolean>,
 }
 export interface _SERVICE extends Whitelist {}
