@@ -6,6 +6,7 @@ type Whitelist =
    getBlacklistQuery: () -> (vec principal) query;
    getCanisterLog: (opt CanisterLogRequest) ->
     (opt CanisterLogResponse) query;
+   getOwner: () -> (principal) query;
    getPending: () -> (vec principal);
    getPendingQuery: () -> (vec principal) query;
    getQueue: () -> (vec record {
@@ -16,6 +17,7 @@ type Whitelist =
                                principal;
                                text;
                              }) query;
+   getStartDate: () -> (Time) query;
    getToken: () -> (opt text);
    getWhitelist: () -> (vec principal);
    getWhitelistQuery: () -> (vec principal) query;
@@ -28,10 +30,13 @@ type Whitelist =
    isQueuedQuery: (principal) -> (bool) query;
    isWhitelisted: (principal) -> (bool);
    isWhitelistedQuery: (principal) -> (bool) query;
-   registerCallback: () -> () oneway;
+   registerCallback: () -> (text);
    remainingSpots: () -> (nat) query;
+   setup: () -> () oneway;
+   whitelistHasStarted: () -> (bool) query;
    whitelistIsFull: () -> (bool) query;
  };
+type Time = int;
 type Result = 
  variant {
    err: CheckStatusError;
@@ -101,6 +106,7 @@ type CheckStatusError =
    pohRejected;
    principalBlacklisted;
    whitelistIsFull;
+   whitelistNotStarted;
  };
 type ChallengeResponse = 
  record {

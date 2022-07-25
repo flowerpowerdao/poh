@@ -11,7 +11,8 @@ module {
     #pohNotCompleted; 
     #principalBlacklisted;
     #pending;
-    #whitelistIsFull
+    #whitelistIsFull;
+    #whitelistNotStarted;
   };
 
   public func accountKey(t: Principal) : Trie.Key<Principal> = { key = t; hash = Principal.hash t };

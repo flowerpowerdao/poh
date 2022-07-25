@@ -34,6 +34,7 @@ export const idlFactory = ({ IDL }) => {
   const CheckStatusError = IDL.Variant({
     'principalBlacklisted' : IDL.Null,
     'pending' : IDL.Null,
+    'whitelistNotStarted' : IDL.Null,
     'whitelistIsFull' : IDL.Null,
     'alreadyWhitelisted' : IDL.Null,
     'noTokenFound' : IDL.Null,
@@ -85,6 +86,7 @@ export const idlFactory = ({ IDL }) => {
     'messagesInfo' : CanisterLogMessagesInfo,
     'messages' : CanisterLogMessages,
   });
+  const Time = IDL.Int;
   const Whitelist = IDL.Service({
     'callback' : IDL.Func([PohVerificationResponsePlus], [], ['oneway']),
     'checkStatus' : IDL.Func([], [Result], []),
@@ -95,6 +97,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(CanisterLogResponse)],
         ['query'],
       ),
+    'getOwner' : IDL.Func([], [IDL.Principal], ['query']),
     'getPending' : IDL.Func([], [IDL.Vec(IDL.Principal)], []),
     'getPendingQuery' : IDL.Func([], [IDL.Vec(IDL.Principal)], ['query']),
     'getQueue' : IDL.Func(
@@ -107,6 +110,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(IDL.Tuple(IDL.Principal, IDL.Text))],
         ['query'],
       ),
+    'getStartDate' : IDL.Func([], [Time], ['query']),
     'getToken' : IDL.Func([], [IDL.Opt(IDL.Text)], []),
     'getWhitelist' : IDL.Func([], [IDL.Vec(IDL.Principal)], []),
     'getWhitelistQuery' : IDL.Func([], [IDL.Vec(IDL.Principal)], ['query']),
@@ -119,8 +123,10 @@ export const idlFactory = ({ IDL }) => {
     'isQueuedQuery' : IDL.Func([IDL.Principal], [IDL.Bool], ['query']),
     'isWhitelisted' : IDL.Func([IDL.Principal], [IDL.Bool], []),
     'isWhitelistedQuery' : IDL.Func([IDL.Principal], [IDL.Bool], ['query']),
-    'registerCallback' : IDL.Func([], [], ['oneway']),
+    'registerCallback' : IDL.Func([], [IDL.Text], []),
     'remainingSpots' : IDL.Func([], [IDL.Nat], ['query']),
+    'setup' : IDL.Func([], [], ['oneway']),
+    'whitelistHasStarted' : IDL.Func([], [IDL.Bool], ['query']),
     'whitelistIsFull' : IDL.Func([], [IDL.Bool], ['query']),
   });
   return Whitelist;
