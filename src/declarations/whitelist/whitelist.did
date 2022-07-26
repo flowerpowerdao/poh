@@ -31,9 +31,7 @@ type Whitelist =
    isQueuedQuery: (principal) -> (bool) query;
    isWhitelisted: (principal) -> (bool);
    isWhitelistedQuery: (principal) -> (bool) query;
-   registerCallback: () -> (text);
    remainingSpots: () -> (nat) query;
-   setup: () -> () oneway;
    whitelistHasEnded: () -> (bool) query;
    whitelistHasStarted: () -> (bool) query;
    whitelistIsFull: () -> (bool) query;
