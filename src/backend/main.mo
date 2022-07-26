@@ -35,7 +35,6 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
   // principals in blacklist can't complete POH and thus shouldnt trigger subsequent calls to 
   // `verifyHumanity`
   stable var blacklist : TrieSet.Set<Principal> = TrieSet.empty();
-  stable var isSetup : Bool = false;
 
   // canistergeek
   stable var _canistergeekLoggerUD: ? Canistergeek.LoggerUpgradeData = null;
