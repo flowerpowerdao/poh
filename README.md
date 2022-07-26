@@ -3,9 +3,9 @@
 - ~~set `ENV` to `prod`~~
 - set `whitelistSize` to correct value
 - reinstall canister to wipe WL state
-- add proviver by calling `setup`
-- add callback by calling `registerCallback`
-- add date gate for backend and frontend so whitelisting ends after 72 hours!
+- ~~add proviver by calling `setup`~~
+- ~~add callback by calling `registerCallback`~~
+- ~~add date gate for backend and frontend so whitelisting ends after 72 hours!~~
 - ~~change modclub frontend canister id`ljyte-qiaaa-aaaah-qaiva-cai`~~
 
 # add provider admin
