@@ -5,8 +5,8 @@
 
   let spotsLeft: bigint;
   let whitelistSize: bigint;
-  let whitelistHasEnded;
-  let whitelistHasStarted;
+  let whitelistHasEnded: Boolean;
+  let whitelistHasStarted: Boolean;
   let endDate;
 
   async function checkRemainingSpots() {
@@ -17,8 +17,8 @@
   onMount(async () => {
     whitelistSize = await whitelist.getWhitelistSize();
     endDate = await whitelist.getEndDate();
-    whitelistHasEnded = await whitelist.whitelistHasEnded;
-    whitelistHasStarted = await whitelist.whitelistHasStarted;
+    whitelistHasEnded = await whitelist.whitelistHasEnded();
+    whitelistHasStarted = await whitelist.whitelistHasStarted();
     await checkRemainingSpots();
     // call method every 5 seconds
     setInterval(checkRemainingSpots, 5000);
