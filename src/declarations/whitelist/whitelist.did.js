@@ -38,6 +38,7 @@ export const idlFactory = ({ IDL }) => {
     'whitelistIsFull' : IDL.Null,
     'alreadyWhitelisted' : IDL.Null,
     'noTokenFound' : IDL.Null,
+    'whitelistEnded' : IDL.Null,
     'notFirstAssociation' : IDL.Null,
     'pohNotCompleted' : IDL.Null,
     'pohRejected' : IDL.Null,
@@ -97,6 +98,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(CanisterLogResponse)],
         ['query'],
       ),
+    'getEndDate' : IDL.Func([], [Time], ['query']),
     'getOwner' : IDL.Func([], [IDL.Principal], ['query']),
     'getPending' : IDL.Func([], [IDL.Vec(IDL.Principal)], []),
     'getPendingQuery' : IDL.Func([], [IDL.Vec(IDL.Principal)], ['query']),
@@ -126,6 +128,7 @@ export const idlFactory = ({ IDL }) => {
     'registerCallback' : IDL.Func([], [IDL.Text], []),
     'remainingSpots' : IDL.Func([], [IDL.Nat], ['query']),
     'setup' : IDL.Func([], [], ['oneway']),
+    'whitelistHasEnded' : IDL.Func([], [IDL.Bool], ['query']),
     'whitelistHasStarted' : IDL.Func([], [IDL.Bool], ['query']),
     'whitelistIsFull' : IDL.Func([], [IDL.Bool], ['query']),
   });

@@ -19,6 +19,7 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
   // 7777 - 2009 (btc) - 4 (jorgen) - 1791 (ethflower)
   let whitelistSize = 3753;
   let startDate = 1658844000000000000;
+  let endDate =   1659103200000000000;
   let canistergeekLogger = Canistergeek.Logger();
 
 /****************
@@ -240,8 +241,16 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
     Time.now() > startDate
   };
 
+  public shared query(msg) func whitelistHasEnded() : async Bool {
+    Time.now() > endDate
+  };
+
   public shared query(msg) func getStartDate() : async Time.Time {
     startDate
+  };
+
+  public shared query(msg) func getEndDate() : async Time.Time {
+    endDate
   };
   
 /*******************
@@ -300,6 +309,9 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
   func handlePohResponse(response: Modclub.PohVerificationResponsePlus, principal: ?Principal) : Result.Result<(), Types.CheckStatusError> {
     if (Time.now() < startDate) {
       return #err(#whitelistNotStarted)
+    };
+    if (Time.now() > endDate) {
+      return #err(#whitelistEnded)
     };
     var caller : Principal = Principal.fromText("2vxsx-fae");
     switch (principal) {

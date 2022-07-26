@@ -13,6 +13,7 @@ module {
     #pending;
     #whitelistIsFull;
     #whitelistNotStarted;
+    #whitelistEnded;
   };
 
   public func accountKey(t: Principal) : Trie.Key<Principal> = { key = t; hash = Principal.hash t };

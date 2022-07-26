@@ -29,6 +29,7 @@ export type CheckStatusError = { 'principalBlacklisted' : null } |
   { 'whitelistIsFull' : null } |
   { 'alreadyWhitelisted' : null } |
   { 'noTokenFound' : null } |
+  { 'whitelistEnded' : null } |
   { 'notFirstAssociation' : null } |
   { 'pohNotCompleted' : null } |
   { 'pohRejected' : null };
@@ -84,6 +85,7 @@ export interface Whitelist {
     [[] | [CanisterLogRequest]],
     [] | [CanisterLogResponse],
   >,
+  'getEndDate' : ActorMethod<[], Time>,
   'getOwner' : ActorMethod<[], Principal>,
   'getPending' : ActorMethod<[], Array<Principal>>,
   'getPendingQuery' : ActorMethod<[], Array<Principal>>,
@@ -105,6 +107,7 @@ export interface Whitelist {
   'registerCallback' : ActorMethod<[], string>,
   'remainingSpots' : ActorMethod<[], bigint>,
   'setup' : ActorMethod<[], undefined>,
+  'whitelistHasEnded' : ActorMethod<[], boolean>,
   'whitelistHasStarted' : ActorMethod<[], boolean>,
   'whitelistIsFull' : ActorMethod<[], boolean>,
 }

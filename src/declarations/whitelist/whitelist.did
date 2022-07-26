@@ -6,6 +6,7 @@ type Whitelist =
    getBlacklistQuery: () -> (vec principal) query;
    getCanisterLog: (opt CanisterLogRequest) ->
     (opt CanisterLogResponse) query;
+   getEndDate: () -> (Time) query;
    getOwner: () -> (principal) query;
    getPending: () -> (vec principal);
    getPendingQuery: () -> (vec principal) query;
@@ -33,6 +34,7 @@ type Whitelist =
    registerCallback: () -> (text);
    remainingSpots: () -> (nat) query;
    setup: () -> () oneway;
+   whitelistHasEnded: () -> (bool) query;
    whitelistHasStarted: () -> (bool) query;
    whitelistIsFull: () -> (bool) query;
  };
@@ -105,6 +107,7 @@ type CheckStatusError =
    pohNotCompleted;
    pohRejected;
    principalBlacklisted;
+   whitelistEnded;
    whitelistIsFull;
    whitelistNotStarted;
  };
