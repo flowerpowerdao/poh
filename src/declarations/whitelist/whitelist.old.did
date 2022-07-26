@@ -1,3 +1,4 @@
+type Time = int;
 type Result = 
  variant {
    err: CheckStatusError;
@@ -67,6 +68,7 @@ type CheckStatusError =
    pohRejected;
    principalBlacklisted;
    whitelistIsFull;
+   whitelistNotStarted;
  };
 type ChallengeResponse = 
  record {
@@ -119,6 +121,7 @@ service : {
                               principal;
                               text;
                             }) query;
+  getStartDate: () -> (Time) query;
   getToken: () -> (opt text);
   getWhitelist: () -> (vec principal);
   getWhitelistQuery: () -> (vec principal) query;
@@ -134,5 +137,6 @@ service : {
   registerCallback: () -> (text);
   remainingSpots: () -> (nat) query;
   setup: () -> () oneway;
+  whitelistHasStarted: () -> (bool) query;
   whitelistIsFull: () -> (bool) query;
 }

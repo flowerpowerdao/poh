@@ -17,6 +17,7 @@ actor {
   stable var _canistergeekLoggerUD : ?LoggerUpgradeData;
   stable var blacklist :
     {#branch : Branch<Principal, ()>; #empty; #leaf : Leaf<Principal, ()>};
+  stable var isSetup : Bool;
   stable var pending :
     {#branch : Branch<Principal, ()>; #empty; #leaf : Leaf<Principal, ()>};
   stable var queue :

@@ -18,7 +18,7 @@ shared ({ caller = init_minter}) actor class Whitelist() = this {
   let ENV = "prod";
   // 7777 - 2009 (btc) - 4 (jorgen) - 1791 (ethflower)
   let whitelistSize = 3753;
-  let startDate = 1658930400000000000;
+  let startDate = 1658844000000000000;
   let canistergeekLogger = Canistergeek.Logger();
 
 /****************
