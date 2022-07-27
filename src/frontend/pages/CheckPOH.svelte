@@ -124,7 +124,9 @@
           isWhitelisted
             ? (whitelistStatus =
                 "🎉 Congrats! Your Principal is whitelisted 🎉")
-            : "😭 Unfortunately you didn't make it on the whitelist 😭";
+            : (whitelistStatus =
+                "😭 Unfortunately you didn't make it on the whitelist 😭");
+          console.log(whitelistStatus);
         }}>check status</Button
       >
     </svelte:fragment>
