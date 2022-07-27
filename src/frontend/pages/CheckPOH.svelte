@@ -2,18 +2,12 @@
   import Button from "../components/Button.svelte";
   import { store } from "../store";
   import type { Result } from "canisters/whitelist/whitelist.did";
-  import {
-    fromErr,
-    isOk,
-    fromNullable,
-    setHours,
-    setMinutes,
-    setSeconds,
-  } from "../utils";
+  import { fromErr, isOk, fromNullable } from "../utils";
   import Card from "../components/Card.svelte";
   import { REDIRECT_URL } from "../constants";
   import { onMount } from "svelte";
   import { whitelist } from "canisters/whitelist";
+  import Countdown from "../components/Countdown.svelte";
 
   let state: string = "loading";
   let token: string;
@@ -21,6 +15,7 @@
   let whitelistHasStarted;
   let whitelistHasEnded;
   let startDate;
+  let whitelistStatus = "";
 
   async function checkStatus() {
     const res: Result = await $store.actor.checkStatus();
@@ -67,14 +62,10 @@
     >
     <svelte:fragment slot="body"
       ><div>Please wait until the whitelisting starts!</div>
-      <span class="countdown font-mono text-2xl mt-4">
-        <span use:setHours={startDate} style="--value:10;" />h
-        <span use:setMinutes={startDate} style="--value:24;" />m
-        <span use:setSeconds={startDate} style="--value:43;" />s
-      </span>
+      <Countdown endDate={startDate} />
     </svelte:fragment>
   </Card>
-{:else if whitelistHasEnded}
+  <!-- {:else if whitelistHasEnded}
   <Card>
     <svelte:fragment slot="title">
       <svg
@@ -95,7 +86,7 @@
     <svelte:fragment slot="body"
       ><div>The whitelisting period is over!</div>
     </svelte:fragment>
-  </Card>
+  </Card> -->
 {:else if !$store.isAuthed && !whitelistIsFull}
   <Card>
     <svelte:fragment slot="title">
@@ -116,12 +107,34 @@
     >
     <svelte:fragment slot="body">Please sign in to continue.</svelte:fragment>
   </Card>
+{:else if whitelistIsFull && $store.isAuthed}
+  <Card>
+    <svelte:fragment slot="title">Whitelist is full</svelte:fragment>
+    <svelte:fragment slot="body">
+      <p>All whitelist spots have been awarded 😪</p>
+      <p>{whitelistStatus}</p>
+    </svelte:fragment>
+    <svelte:fragment slot="actions">
+      <Button
+        style="btn-primary"
+        on:click={async () => {
+          let isWhitelisted = await whitelist.isWhitelistedQuery(
+            $store.principal,
+          );
+          isWhitelisted
+            ? (whitelistStatus =
+                "🎉 Congrats! Your Principal is whitelisted 🎉")
+            : "😭 Unfortunately you didn't make it on the whitelist 😭";
+        }}>check status</Button
+      >
+    </svelte:fragment>
+  </Card>
 {:else if whitelistIsFull}
   <Card>
     <svelte:fragment slot="title">Whitelist is full</svelte:fragment>
-    <svelte:fragment slot="body"
-      >All whitelist spots have been awarded 😪</svelte:fragment
-    >
+    <svelte:fragment slot="body">
+      All whitelist spots have been awarded 😪
+    </svelte:fragment>
   </Card>
 {:else if state === "alreadyWhitelisted"}
   <Card>
@@ -205,14 +218,6 @@
           );
         }}>start poh</Button
       >
-    </svelte:fragment>
-  </Card>
-{:else if state === "notFirstAssociation"}
-  <Card>
-    <svelte:fragment slot="title">POH rejected</svelte:fragment>
-    <svelte:fragment slot="body">
-      Your POH attempt has been rejected. <br />
-      Please try again with another principal and MODCLUB account.
     </svelte:fragment>
   </Card>
 {/if}
